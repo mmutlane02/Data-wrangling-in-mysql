@@ -1,0 +1,95 @@
+
+DATA WRANGLING IN MySQL
+
+Data wrangling is a process where raw data is tranformed and made ready for analysis
+In this project we'll use MySQL to wrangle the data for further analysis. 
+
+DESCRIPTION
+This dataset was obtained from kaggle: https://www.kaggle.com/datasets/rickyrrii/old-car-price-data
+It contains information about various cars' specs and it's is made up of 26 rows and 199 columns. 
+The columns contains data about the car price, make, fuel type, number of wheels, width, height, etc. 
+
+We will cover the following steps:
+1. Backup table
+2. Data Cleaning (duplicates and missing values)
+3. Data Transformation
+4. Data Standardization 
+5. Binning
+
+
+1. FIRST THINGS FIRST
+Before messing with the data, we started by creating a backup table so that if something goes wrong there's an original data to revert to
+
+
+2. DATA CLEANING
+
+2.1. FINDING DUPLICATES
+
+We did a subquery and partitioned it over every column and there we co duplicates found in our data
+
+2.2. MISSING VALUES
+
+Steps for working with missing data:
+    a). Identify missing data
+    b). Deal with missing data
+    c). Correct data format
+
+Missing values in our dataset are represented by '?', so we went through each and every column and we found a total of 45 ?s
+     * 39 in normalized_losses
+     * 2 in num_of_doors
+     * 4 in Price
+Now we'll have to decide what to do with the missing data, there are ways to deal with them
+     a).  Drop the data (drop the whole column or drop by row)
+     b). Replace the data (by Frequency in categirical values or Average in numerical values )
+
+   * Drop the whole column - this method should only be used when the entire column is empty, or not useful
+         Reason - there are some useful values in the column
+   * Drop by row - we'll use this method on the price column. 
+         Reason - because the price is what we're trying to predict. Any data entry without the price data cannot be used for prediction,
+	therefore, any row without the price is not useful to us.
+   * Replace by frequency - we'll use this methos on num_of_doors  
+         Reason - 84% of sedans in our data is four doors. Since four doors is most frequent, it is most likely to occur
+   * Replace by average - we'll use this method on normalized_losses
+          Reason - it is a numerical data, and has no frequent values we can use
+
+
+3. DATA TRANSFORMATION
+
+We'll now tranform our data into a more readable format
+
+a). Renaming the columns and removing unwanted characters
+The price column contains some unwated characters, let's fix that.
+     * Renaming the column from `price;;;;;;;;;;;;;;;;;;;;;price` to price.
+     * Removed the trailing ';'
+     * And updated the table
+
+b). Changing the data types
+     * The normalized_losses and price columns  are numerical values but were stored in a text format,
+           so we changed them from TEXT to INT
+ 
+
+4. DATA STANDARDIZATION
+
+Standardization is the process of transforming data into a common format which allows the researcher 
+to make the meaningful comparison.
+
+In our dataset, the fuel consumption columns "city-mpg" and "highway-mpg" are represented by mpg (miles per gallon) unit. 
+Assume we are developing an application in a country that accept the fuel consumption with L/100km standard,
+we will need to apply data transformation to transform mpg into L/100km?
+
+The formula for unit conversion is : L/100km = 235.2145 / mpg
+      *  We have transformed the values in the columns "city-mpg" and "highway-mpg"  from miles per gallon to L/100km
+      *  And changed their data type from INT to DOUBLE
+
+
+5. BINNING
+
+Binning is a process of transforming continuous numerical variables into discrete categorical 'bins', for grouped analysis.
+
+In our dataset, "horsepower" is a real valued variable ranging from 48 to 268, it has 57 unique values. 
+What if we only care about the price difference between cars with low, medium, high and very high horsepower? 
+We can rearrange them into four segments ‘bins' to simplify the analysis.
+
+We also updated the table and changed the data type from INT to TEXT
+
+
